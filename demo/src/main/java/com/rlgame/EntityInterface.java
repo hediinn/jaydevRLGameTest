@@ -7,6 +7,7 @@ public interface EntityInterface {
     public Vector2 pos();
     public int getHP();
     public void takeDamage(int dmg);
-    public void dealDamage();
+    public void interact(EntityInterface dmgTo);
+    public String type();
     
 }

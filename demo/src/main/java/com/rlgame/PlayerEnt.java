@@ -29,9 +29,12 @@ public class PlayerEnt implements EntityInterface {
     }
 
     @Override
-    public void dealDamage() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'dealDamage'");
+    public void interact(EntityInterface dmgTo) {
+        dmgTo.interact(this);
+    }
+    @Override
+    public String type() {
+        return "Player";
     }
     
 }

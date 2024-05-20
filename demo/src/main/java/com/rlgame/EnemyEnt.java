@@ -21,20 +21,29 @@ public class EnemyEnt implements EntityInterface {
 
     @Override
     public int getHP() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getHP'");
+        return HP;
     }
 
     @Override
     public void takeDamage(int dmg) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'takeDamage'");
+        HP -=dmg;
+        System.out.println(HP);
+        if(HP <= 0) {
+            
+        }
     }
 
     @Override
-    public void dealDamage() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'dealDamage'");
+    public void interact(EntityInterface dmgTo) {
+        if(dmgTo.type() == "player") {
+            takeDamage(2);
+        }
+    }
+
+
+    @Override
+    public String type() {
+        return "Enemy";
     }
     
 }

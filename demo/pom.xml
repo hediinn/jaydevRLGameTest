@@ -11,6 +11,7 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.class>com.rlgame.Main</main.class>
     </properties>
 
@@ -33,20 +34,21 @@
             </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>2.4.1</version>
+                <version>3.3.2</version>
                 <configuration>
+                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
                     <filesets>
                         <fileset>
-                            <directory>target/</directory>
+                            <directory>target</directory>
                             <includes>
-                                <include>**/*.tmp</include>
-                                <include>**/*.log</include>
                                 <include>**/*.class</include>
+                                <include>**/.lst</include>
                             </includes>
+                            <followSymlinks>false</followSymlinks>
+                    <!--      <useDefaultExcludes>true</useDefaultExcludes> -->
                             <excludes>
                                 <exclude>**/.gitkeep</exclude>
                             </excludes>
-                            <followSymlinks>false</followSymlinks>
                         </fileset>
                     </filesets>
                 </configuration>
