@@ -19,10 +19,12 @@ public class Game {
     ArrayList<Point> map = genMap();
     Vector2 playerPos = new Vector2().x(map.get(0).x()+25).y(map.get(0).y()+25);
     Vector2 enemyPos = new Vector2().x(map.get(2).x() + 25.0f).y(map.get(2).y()+ 25.0f);
+    PlayerEnt player = new PlayerEnt(playerPos, 10);
+    EnemyEnt enemy = new EnemyEnt(enemyPos, 2);
     List<Entity> entityList = new ArrayList<Entity>();
     public void startGame(){
-        entityList.add(new Entity(playerPos,GREEN, true));
-        entityList.add(new Entity(enemyPos, BEIGE,false));
+        entityList.add(new Entity(player,GREEN, true));
+        entityList.add(new Entity(enemy, BEIGE,false));
         InitWindow(800, 800, "Demo");
 
 
@@ -42,7 +44,7 @@ public class Game {
                     DrawRectangle(point.x(), point.y(), 100, 100, GRAY);
             }
             for (Entity ent : entityList) {
-                DrawRectangle((int)ent.pos().x(), (int)ent.pos().y(), 50, 50, ent.color());
+                DrawRectangle((int)ent.entity().pos().x(), (int)ent.entity().pos().y(), 50, 50, ent.color());
             }
             EndDrawing();
         
