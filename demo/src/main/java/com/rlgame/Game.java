@@ -1,6 +1,7 @@
 package com.rlgame;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import static com.raylib.Jaylib.*;
 import static com.raylib.Raylib.BeginDrawing;
@@ -10,43 +11,80 @@ import static com.raylib.Raylib.DrawRectangle;
 import static com.raylib.Raylib.EndDrawing;
 import static com.raylib.Raylib.InitWindow;
 import static com.raylib.Raylib.SetTargetFPS;
+import static com.raylib.Raylib.Vector2Add;
 import static com.raylib.Raylib.WindowShouldClose;
 
 import com.raylib.Raylib.Vector2;
 
+import static com.rlgame.Globals.tileSize;
+import com.rlgame.Generators;
 
 public class Game {
 
 
-    ArrayList<Point> map = genMap();
-    Vector2 playerPos = new Vector2().x(map.get(0).x()+25).y(map.get(0).y()+25);
-    Vector2 enemyPos = new Vector2().x(map.get(2).x() + 25.0f).y(map.get(2).y()+ 25.0f);
+    List<Entity> entityList;
+    ArrayList<Point> map;
+    Point unUsedPoint;
+    
+    Vector2 playerPos;
+    Vector2 enemyPos;
+    PlayerEnt player;
+    Entity playerEnt;
 
-    PlayerEnt player = new PlayerEnt(playerPos, 10);
-    Entity playerEnt = new Entity(player,GREEN, true);
+    EnemyEnt enemy;
+    Entity enemyEnt;
 
 
-    EnemyEnt enemy = new EnemyEnt(enemyPos, 4);
-    Entity enemyEnt = new Entity(enemy, BEIGE, false);
-
-
-    List<Entity> entityList = new ArrayList<Entity>();
     Vector2 movementVec = new Vector2().x(0).y(0);
     Entity playerTouches = null; 
 
     public void startGame(){
-        entityList.add(enemyEnt);
+        GameMap map = new GameMap(10);
+        map.startMap();
+        entityList = map.getEntities();
+        unUsedPoint = map.nextUnused();
+        playerPos = new Vector2().x(unUsedPoint.x()+tileSize/4).y(unUsedPoint.y()+tileSize/4);
+        
+        player = new PlayerEnt(playerPos, 10);
+        playerEnt = new Entity(player, GREEN, tileSize/2);
+
+        //enemy = new EnemyEnt(enemyPos, 4);
+        //enemyEnt = new Entity(enemy, BEIGE, tileSize/2);
+
+//        entityList.add(enemyEnt);
+        Stack<Entity> entsToRemove = new Stack<>();
+        
         InitWindow(800, 800, "Demo");
 
 
 
         SetTargetFPS(60);
         while (!WindowShouldClose()) {
+
+
+
+
             //----------------------------------------------------------------------------------
             playerTouches = null;
+            if(player.getHP()<= 0) {
+                System.out.println("you lost");
+                System.exit(0);
+            }
+            for (Entity entity : entityList) {
+                if(entity.entity().type() == "Enemy") {
+                    if(entity.entity().getHP() <=0) {
+                        entsToRemove.add(entity);
+
+                   }
+                }
+            }
+            for (Entity entity : entsToRemove) {
+                entityList.remove(entity);
+            }
+            entsToRemove.clear();
             move();
             for (Entity enemi : entityList) {
-                if(checkMove(enemi.entity())) { 
+                if(checkMove(enemi) && enemi.entity().isBlocking()) { 
                     movementVec.x(0).y(0);
                     playerTouches = enemi;
                 }
@@ -67,41 +105,44 @@ public class Game {
 
             ClearBackground(RAYWHITE);
 
-            for (Point point : map) {
-                    DrawRectangle(point.x(), point.y(), 100, 100, GRAY);
+            for (Point point : map.getPoints()) {
+                    DrawRectangle(point.x(), point.y(), tileSize, tileSize, GRAY);
+         //           DrawText(""+point.x() + "\n"+point.y(), point.x(),point.y(), tileSize/4, BLUE);
             }
             for (Entity ent : entityList) {
-                DrawRectangle((int)ent.entity().pos().x(), (int)ent.entity().pos().y(), 50, 50, ent.color());
+                DrawRectangle((int)ent.entity().pos().x(), (int)ent.entity().pos().y(), ent.size(), ent.size(), ent.color());
             }
-            DrawRectangle((int)playerEnt.entity().pos().x(), (int)playerEnt.entity().pos().y(), 50, 50, playerEnt.color());
+            DrawRectangle((int)playerEnt.entity().pos().x(), (int)playerEnt.entity().pos().y(), playerEnt.size(), playerEnt.size(), playerEnt.color());
+            DrawText("?",(int)playerEnt.entity().pos().x(), (int)playerEnt.entity().pos().y(), playerEnt.size(), RED);
+
             EndDrawing();
         
         }
         playerPos.close();
-        enemyPos.close();
         movementVec.close();
+        for (Entity entity : entityList) {
+            entity.entity().pos().close();
+        }
         
         CloseWindow();
     }
 
-    private static ArrayList<Point> genMap() {
-        ArrayList<Point> map = new ArrayList<>();
-        for (int row = 0; row < 5; row++) {
-            for (int col = 0; col < 5; col++) {
-                Point point = new Point(30+row*105, 30+col*105);
-                map.add(point);
-            }
-        }
-        return map;
-    }
-    private boolean checkMove(EntityInterface checkEnemy) {
 
+    private boolean checkMove(Entity checkEnemy) {
+
+        Vector2 ifMove = Vector2Add(movementVec, playerPos);
+        Vector2 enemyVec = checkEnemy.entity().pos();
         
-        if(movementVec.x()+player.pos().x() == checkEnemy.pos().x() && movementVec.y()+player.pos().y() == checkEnemy.pos().y()) { 
-            return true;
+        if (enemyVec.x()+checkEnemy.size() >= ifMove.x()&&
+            enemyVec.y()+checkEnemy.size() >= ifMove.y() &&
+            enemyVec.x()<= ifMove.x() &&
+            enemyVec.y()<= ifMove.y()
+        ) 
+        {
+           return true; 
         }
-
-        else{
+        else
+        {
 
             return false;
         }

@@ -35,7 +35,7 @@ public class EnemyEnt implements EntityInterface {
 
     @Override
     public void interact(EntityInterface dmgTo) {
-        if(dmgTo.type() == "player") {
+        if(dmgTo.type() == "Player") {
             takeDamage(2);
         }
     }
@@ -44,6 +44,19 @@ public class EnemyEnt implements EntityInterface {
     @Override
     public String type() {
         return "Enemy";
+    }
+
+
+    @Override
+    public boolean isBlocking() {
+        return true; 
+    }
+
+
+    @Override
+    public void takeTurn() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'takeTurn'");
     }
     
 }

@@ -9,5 +9,7 @@ public interface EntityInterface {
     public void takeDamage(int dmg);
     public void interact(EntityInterface dmgTo);
     public String type();
+    public boolean isBlocking();
+    public void takeTurn();
     
 }
