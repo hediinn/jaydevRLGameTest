@@ -39,7 +39,7 @@ public class Game {
     Entity playerTouches = null; 
 
     public void startGame(){
-        GameMap map = new GameMap(10);
+        GameMap map = new GameMap(21);
         map.startMap();
         entityList = map.getEntities();
         unUsedPoint = map.nextUnused();
