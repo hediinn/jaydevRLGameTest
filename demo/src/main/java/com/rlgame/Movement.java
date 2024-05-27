@@ -10,16 +10,16 @@ public class Movement {
     final static Float ofset = (float)tileSize;//+5;
     public static Vector2 move(Vector2 vec2) {
         Vector2 res = vec2;
-        if (IsKeyPressed(KEY_DOWN)) {
+        if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_K)){
             res = vec2.y(vec2.y()+ofset);
         }
-        if (IsKeyPressed(KEY_UP)) {
+        if (IsKeyPressed(KEY_UP)||IsKeyPressed(KEY_J)) {
             res = vec2.y(vec2.y()-ofset);
         }
-        if (IsKeyPressed(KEY_LEFT)) {
+        if (IsKeyPressed(KEY_LEFT)||IsKeyPressed(KEY_H)) {
             res = vec2.x(vec2.x()-ofset);
         }
-        if (IsKeyPressed(KEY_RIGHT)) {
+        if (IsKeyPressed(KEY_RIGHT)||IsKeyPressed(KEY_L)) {
             res = vec2.x(vec2.x()+ofset);
         }
         return res;

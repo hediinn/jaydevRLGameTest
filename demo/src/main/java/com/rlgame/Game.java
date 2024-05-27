@@ -16,6 +16,7 @@ import static com.raylib.Raylib.WindowShouldClose;
 
 import com.raylib.Raylib.Vector2;
 
+import static com.rlgame.Globals.mapSize;
 import static com.rlgame.Globals.tileSize;
 import com.rlgame.Generators;
 
@@ -39,7 +40,7 @@ public class Game {
     Entity playerTouches = null; 
 
     public void startGame(){
-        GameMap map = new GameMap(21);
+        GameMap map = new GameMap(mapSize);
         map.startMap();
         entityList = map.getEntities();
         unUsedPoint = map.nextUnused();

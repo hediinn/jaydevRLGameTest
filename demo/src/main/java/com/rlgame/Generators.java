@@ -15,7 +15,7 @@ public class Generators {
         ArrayList<Point> map = new ArrayList<>();
         for (int row = 0; row <= size; row++) {
             for (int col = 0; col <= size; col++) {
-                Point point = new Point(tileSize/2+row*(tileSize), tileSize/2+col*(tileSize),false);
+                Point point = new Point(/*tileSize/2+*/row*(tileSize), /*tileSize/2+*/col*(tileSize));
                 map.add(point);
             }
         }
