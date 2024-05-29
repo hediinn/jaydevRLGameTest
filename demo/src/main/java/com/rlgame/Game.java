@@ -111,7 +111,7 @@ public class Game {
          //           DrawText(""+point.x() + "\n"+point.y(), point.x(),point.y(), tileSize/4, BLUE);
             }
             for (Entity ent : entityList) {
-                DrawRectangle((int)ent.entity().pos().x(), (int)ent.entity().pos().y(), ent.size(), ent.size(), ent.color());
+                DrawRectangle((int)ent.entity().pos().x(), (int)ent.entity().pos().y(), ent.size() -2, ent.size() -2, ent.color());
             }
             DrawRectangle((int)playerEnt.entity().pos().x(), (int)playerEnt.entity().pos().y(), playerEnt.size(), playerEnt.size(), playerEnt.color());
             DrawText("?",(int)playerEnt.entity().pos().x(), (int)playerEnt.entity().pos().y(), playerEnt.size(), RED);
