@@ -18,7 +18,9 @@ import com.raylib.Raylib.Vector2;
 
 import static com.rlgame.Globals.mapSize;
 import static com.rlgame.Globals.tileSize;
-import com.rlgame.Generators;
+
+import com.rlgame.map.GameMap;
+import com.rlgame.map.Generators;
 
 public class Game {
 

@@ -1,7 +1,9 @@
-package com.rlgame;
+package com.rlgame.map;
 import static com.rlgame.Globals.tileSize;
 
 import java.util.ArrayList;
+
+import com.rlgame.Point;
 
 public class Generators {
     

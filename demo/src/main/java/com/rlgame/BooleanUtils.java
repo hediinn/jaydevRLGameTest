@@ -2,6 +2,8 @@ package com.rlgame;
 
 import static com.rlgame.Globals.tileSize;
 
+import com.rlgame.map.Room;
+
 public class BooleanUtils {
     
     public static void printBoolMap(boolean[][] booleanMap) {

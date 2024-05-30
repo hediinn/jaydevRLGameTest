@@ -1,16 +1,19 @@
-package com.rlgame;
+package com.rlgame.map;
 
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.math.*;
 
 import static com.rlgame.Globals.mapSize;
 import static com.rlgame.Globals.tileSize;
 
 import com.raylib.Jaylib.Vector2;
+import com.rlgame.BooleanUtils;
+import com.rlgame.Entity;
+import com.rlgame.Point;
+import com.rlgame.WallEnt;
+
 import static com.raylib.Jaylib.*;
 
 public class GameMap {
@@ -19,6 +22,7 @@ public class GameMap {
     private boolean[][] booleanMap;
     private List<Entity> entities;
     private Point unUsed = null;
+    private int seed = 2;
 
     
     public GameMap(int size) {
@@ -34,7 +38,9 @@ public class GameMap {
 
         
         ArrayList<Room> rooms = new ArrayList<>();
-        Random ran = new Random(1);
+
+
+        Random ran = new Random(2);
         
         for (int i = 0; i < booleanMap.length; i++) {
             for (int j = 0; j < booleanMap.length; j++) {
@@ -67,6 +73,7 @@ public class GameMap {
         BooleanUtils.printBoolMap(booleanMap);
         placeTunnels(rooms);
 
+        
         for (Point p : map) {
             //System.err.println(p.x()+ "  "+p.y());
             if( 
@@ -124,7 +131,7 @@ public class GameMap {
     //1
     //012
     private void placeTunnels(ArrayList<Room> rooms){
-
+     
         boolean swap = true;
         for (int room = 0; room <rooms.size(); room++) {
             int x1 = ((rooms.get(room).x()/tileSize) *2+ rooms.get(room).w())/2;
@@ -150,7 +157,8 @@ public class GameMap {
             y2 = y2/2;
 
 
-
+            
+            
 
             int wx1,wx2,wy1,wy2;
             wx1 = x1;
