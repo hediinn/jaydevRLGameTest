@@ -18,22 +18,27 @@ import static com.raylib.Jaylib.*;
 
 public class GameMap {
     
-    private ArrayList<Point> map;
+    private ArrayList<Point> mapPoints;
     private boolean[][] booleanMap;
     private List<Entity> entities;
     private Point unUsed = null;
-    private int roomCount = 8;
     //private int seed = 0; green seed
-    private Random ran = new Random(seed);
+    private Random ran;
+    private int roomCount;
        
     private ArrayList<Room> rooms = new ArrayList<>();
-    public GameMap(int size) {
+    public GameMap(int size, Random ra) {
+        ran = ra;
+        roomCount = ran.nextInt(6,9);
         entities = new ArrayList<Entity>();
-        map = Generators.genMap(size);
+        mapPoints = Generators.genMap(size);
         booleanMap = new boolean[size+1][size+1];
     }
 
     private ArrayList<Room> randomRooms(boolean[][] bmap) {
+        ran.nextFloat();
+        ran.nextBoolean();
+        ran.nextInt();
         ArrayList<Room> tempList = new ArrayList<>();
         Room playerRoom = new Room(tileSize,tileSize,3,3);
         tempList.add(playerRoom);
@@ -67,7 +72,7 @@ public class GameMap {
 
 
     public void startMap() {
-        for (Point p : map) {
+        for (Point p : mapPoints) {
             entities.add(new Entity(new WallEnt(new Vector2().x(p.x()).y(p.y())), YELLOW, tileSize));
             booleanMap[p.x()/tileSize][p.y()/tileSize] = true;
         }
@@ -107,7 +112,7 @@ public class GameMap {
 
         BooleanUtils.printBoolMap(booleanMap);
       //  booleanMap = new Generators().flood(new Point(14, 14), booleanMap);
-        for (Point p : map) {
+        for (Point p : mapPoints) {
             //System.err.println(p.x()+ "  "+p.y());
             if( 
                 !booleanMap[(p.x()/tileSize)][(p.y()/tileSize)]
@@ -140,7 +145,7 @@ public class GameMap {
         entities.add(enti);
     }
     public ArrayList<Point> getPoints() {
-        return map;
+        return mapPoints;
     }
 
     public Point nextUnused() {

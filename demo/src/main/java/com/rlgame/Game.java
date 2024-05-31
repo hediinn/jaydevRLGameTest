@@ -1,6 +1,7 @@
 package com.rlgame;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Stack;
 
 import static com.raylib.Jaylib.*;
@@ -18,11 +19,13 @@ import static com.raylib.Raylib.WindowShouldClose;
 import com.raylib.Raylib.Vector2;
 
 import static com.rlgame.Globals.mapSize;
+import static com.rlgame.Globals.seed;
 import static com.rlgame.Globals.tileSize;
 
 import com.rlgame.entities.EnemyEnt;
 import com.rlgame.entities.Entity;
 import com.rlgame.entities.PlayerEnt;
+import com.rlgame.entities.PotionEnt;
 import com.rlgame.map.GameMap;
 import com.rlgame.map.Room;
 
@@ -30,7 +33,7 @@ public class Game {
 
 
     List<Entity> entityList;
-    ArrayList<Point> map;
+    ArrayList<Point> mapPoint;
     Point unUsedPoint;
     
     Vector2 playerPos;
@@ -40,23 +43,35 @@ public class Game {
 
     EnemyEnt enemy;
     Entity enemyEnt;
+    Random random = new Random(seed);
 
 
     Vector2 movementVec = new Vector2().x(0).y(0);
     Entity playerTouches = null; 
 
     public void startGame(){
-        GameMap map = new GameMap(mapSize);
-        map.startMap();
+        GameMap[] maps = new GameMap[2];
+        maps[0] = new GameMap(mapSize,random);
+        maps[1] = new GameMap(mapSize,random);
+        
+        for (GameMap gameMap : maps) {
+            gameMap.startMap();
+        }
+        
+        GameMap map = maps[0];
+        
         entityList = map.getEntities();
         unUsedPoint = map.nextUnused();
         playerPos = new Vector2().x(unUsedPoint.x()+tileSize/4).y(unUsedPoint.y()+tileSize/4);
+
         
         player = new PlayerEnt(playerPos, 10);
         playerEnt = new Entity(player, GREEN, tileSize/2);
+        // TODO split this
 
 
         int enemyCount = 5;
+        int potionCount = 2;
         for (Room room : map.getRooms()) {
             int random = map.getRandom().nextInt(0, 4);
             int x = room.x();
@@ -65,24 +80,25 @@ public class Game {
             if (!(enemyVec.x() == playerPos.x() && enemyVec.y() == playerPos.y()) && random <3 && enemyCount>0) {
                 entityList.add(new Entity(new EnemyEnt(enemyVec,10), RED,tileSize/2));
                 enemyCount--;
-
+            }
+            if (!(enemyVec.x() == playerPos.x() && enemyVec.y() == playerPos.y()) &&(random ==3 && potionCount>0)) {
+                entityList.add(new Entity(new PotionEnt(enemyVec), GREEN,tileSize/2));
+                potionCount--;
             }
         }
         //enemy = new EnemyEnt(enemyPos, 4);
         //enemyEnt = new Entity(enemy, BEIGE, tileSize/2);
 
+    // TODO split this
 //        entityList.add(enemyEnt);
         Stack<Entity> entsToRemove = new Stack<>();
         
         InitWindow(800, 800, "Demo");
 
 
-
+// START OF GAME
         SetTargetFPS(60);
         while (!WindowShouldClose()) {
-
-
-
 
             //----------------------------------------------------------------------------------
             playerTouches = null;
@@ -92,10 +108,14 @@ public class Game {
             }
             for (Entity entity : entityList) {
                 if(entity.entity().type() == "Enemy") {
+                        if(entity.entity().getHP() <=0) {
+                            entsToRemove.add(entity);
+                    }
+                }
+                if(entity.entity().type() == "Potion"){
                     if(entity.entity().getHP() <=0) {
-                        entsToRemove.add(entity);
-
-                   }
+                            entsToRemove.add(entity);
+                    }
                 }
             }
             for (Entity entity : entsToRemove) {
@@ -115,10 +135,6 @@ public class Game {
                 player.interact(playerTouches.entity());
             }
 
-            if(player.getHP()<=0) {
-                System.out.println("you died!");
-                System.exit(0);
-            }
 
             player.pos().x(movementVec.x()+player.pos().x()).y(movementVec.y()+player.pos().y());
             
@@ -137,6 +153,7 @@ public class Game {
             }
             DrawRectangle((int)playerEnt.entity().pos().x(), (int)playerEnt.entity().pos().y(), playerEnt.size(), playerEnt.size(), playerEnt.color());
             DrawText("?",(int)playerEnt.entity().pos().x()+3, (int)playerEnt.entity().pos().y()+3, playerEnt.size(), RED);
+            DrawText(player.getHP()+"", 100, 750, 20, RED);
 
             EndDrawing();
         
