@@ -1,27 +1,21 @@
 package com.rlgame.entities;
 
-import static com.rlgame.Globals.seed;
-
-import java.util.Random;
-
 import com.raylib.Raylib.Vector2;
 
-public class EnemyEnt implements EntityInterface {
+public class PotionEnt implements EntityInterface {
+
+    private Vector2 point;
+    private String type = "Potion";
+    private int HP = 1;
 
 
-    private Vector2 pos;
-    private int HP;
-    private Random r = new Random(seed);
-
-    public EnemyEnt(Vector2 startPos, int startHP) {
-        pos = startPos;
-        HP = startHP;
+    public PotionEnt(Vector2 p) {
+        point = p;
     }
-
 
     @Override
     public Vector2 pos() {
-        return pos;
+        return point;
     }
 
     @Override
@@ -31,35 +25,25 @@ public class EnemyEnt implements EntityInterface {
 
     @Override
     public void takeDamage(int dmg) {
-        HP -=dmg;
-        if(HP <= 0) {
-            
-        }
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'takeDamage'");
     }
 
     @Override
     public void interact(EntityInterface dmgTo) {
-        if(dmgTo.type() == "Player") {
-            takeDamage(2);
-        }
-        if(r.nextInt(0,10)<5) {
-            dmgTo.takeDamage(-1);
-        }
-
+        dmgTo.takeDamage(2);
+        HP = 0;
     }
-
 
     @Override
     public String type() {
-        return "Enemy";
+        return type;
     }
-
 
     @Override
     public boolean isBlocking() {
-        return true; 
+        return true;
     }
-
 
     @Override
     public void takeTurn() {

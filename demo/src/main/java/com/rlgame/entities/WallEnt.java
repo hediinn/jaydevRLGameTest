@@ -1,7 +1,6 @@
 package com.rlgame.entities;
 
 import com.raylib.Raylib.Vector2;
-import com.rlgame.EntityInterface;
 
 public class WallEnt implements EntityInterface{
 

@@ -1,4 +1,4 @@
-package com.rlgame;
+package com.rlgame.entities;
 
 import com.raylib.Raylib.Vector2;
 

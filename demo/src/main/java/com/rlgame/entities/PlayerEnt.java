@@ -1,7 +1,6 @@
 package com.rlgame.entities;
 
 import com.raylib.Raylib.Vector2;
-import com.rlgame.EntityInterface;
 
 public class PlayerEnt implements EntityInterface {
 
@@ -25,7 +24,7 @@ public class PlayerEnt implements EntityInterface {
 
     @Override
     public void takeDamage(int dmg) {
-        HP = HP -dmg;
+        HP = HP +dmg;
     }
 
     @Override
