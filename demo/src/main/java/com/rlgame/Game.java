@@ -27,6 +27,7 @@ import com.rlgame.entities.Entity;
 import com.rlgame.entities.PlayerEnt;
 import com.rlgame.entities.PotionEnt;
 import com.rlgame.map.GameMap;
+import com.rlgame.map.MapSetup;
 import com.rlgame.map.Room;
 
 public class Game {
@@ -50,15 +51,10 @@ public class Game {
     Entity playerTouches = null; 
 
     public void startGame(){
-        GameMap[] maps = new GameMap[2];
-        maps[0] = new GameMap(mapSize,random);
-        maps[1] = new GameMap(mapSize,random);
-        
-        for (GameMap gameMap : maps) {
-            gameMap.startMap();
-        }
-        
-        GameMap map = maps[0];
+
+        MapSetup mapSetup = new MapSetup(2,random);
+        GameMap map = mapSetup.getCurrentMap();
+        // TODO split this
         
         entityList = map.getEntities();
         unUsedPoint = map.nextUnused();
@@ -67,7 +63,6 @@ public class Game {
         
         player = new PlayerEnt(playerPos, 10);
         playerEnt = new Entity(player, GREEN, tileSize/2);
-        // TODO split this
 
 
         int enemyCount = 5;
@@ -78,7 +73,7 @@ public class Game {
             int y = room.y();
             Vector2 enemyVec = new Vector2().x(x+tileSize/4).y(y+tileSize/4);
             if (!(enemyVec.x() == playerPos.x() && enemyVec.y() == playerPos.y()) && random <3 && enemyCount>0) {
-                entityList.add(new Entity(new EnemyEnt(enemyVec,10), RED,tileSize/2));
+                entityList.add(new Entity(new EnemyEnt(enemyVec,10-random), RED,tileSize/2));
                 enemyCount--;
             }
             if (!(enemyVec.x() == playerPos.x() && enemyVec.y() == playerPos.y()) &&(random ==3 && potionCount>0)) {
@@ -86,17 +81,15 @@ public class Game {
                 potionCount--;
             }
         }
-        //enemy = new EnemyEnt(enemyPos, 4);
-        //enemyEnt = new Entity(enemy, BEIGE, tileSize/2);
-
     // TODO split this
-//        entityList.add(enemyEnt);
+
+
         Stack<Entity> entsToRemove = new Stack<>();
         
+        
+        
+        // START OF GAME
         InitWindow(800, 800, "Demo");
-
-
-// START OF GAME
         SetTargetFPS(60);
         while (!WindowShouldClose()) {
 
