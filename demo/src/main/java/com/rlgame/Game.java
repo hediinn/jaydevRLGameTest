@@ -8,6 +8,7 @@ import static com.raylib.Raylib.BeginDrawing;
 import static com.raylib.Raylib.ClearBackground;
 import static com.raylib.Raylib.CloseWindow;
 import static com.raylib.Raylib.DrawRectangle;
+import static com.raylib.Raylib.DrawText;
 import static com.raylib.Raylib.EndDrawing;
 import static com.raylib.Raylib.InitWindow;
 import static com.raylib.Raylib.SetTargetFPS;
@@ -19,8 +20,11 @@ import com.raylib.Raylib.Vector2;
 import static com.rlgame.Globals.mapSize;
 import static com.rlgame.Globals.tileSize;
 
+import com.rlgame.entities.EnemyEnt;
+import com.rlgame.entities.Entity;
+import com.rlgame.entities.PlayerEnt;
 import com.rlgame.map.GameMap;
-import com.rlgame.map.Generators;
+import com.rlgame.map.Room;
 
 public class Game {
 
@@ -51,6 +55,19 @@ public class Game {
         player = new PlayerEnt(playerPos, 10);
         playerEnt = new Entity(player, GREEN, tileSize/2);
 
+
+        int enemyCount = 5;
+        for (Room room : map.getRooms()) {
+            int random = map.getRandom().nextInt(0, 4);
+            int x = room.x();
+            int y = room.y();
+            Vector2 enemyVec = new Vector2().x(x+tileSize/4).y(y+tileSize/4);
+            if (!(enemyVec.x() == playerPos.x() && enemyVec.y() == playerPos.y()) && random <3 && enemyCount>0) {
+                entityList.add(new Entity(new EnemyEnt(enemyVec,10), RED,tileSize/2));
+                enemyCount--;
+
+            }
+        }
         //enemy = new EnemyEnt(enemyPos, 4);
         //enemyEnt = new Entity(enemy, BEIGE, tileSize/2);
 
@@ -98,7 +115,10 @@ public class Game {
                 player.interact(playerTouches.entity());
             }
 
-
+            if(player.getHP()<=0) {
+                System.out.println("you died!");
+                System.exit(0);
+            }
 
             player.pos().x(movementVec.x()+player.pos().x()).y(movementVec.y()+player.pos().y());
             
@@ -116,7 +136,7 @@ public class Game {
                 DrawRectangle((int)ent.entity().pos().x(), (int)ent.entity().pos().y(), ent.size() -2, ent.size() -2, ent.color());
             }
             DrawRectangle((int)playerEnt.entity().pos().x(), (int)playerEnt.entity().pos().y(), playerEnt.size(), playerEnt.size(), playerEnt.color());
-            DrawText("?",(int)playerEnt.entity().pos().x(), (int)playerEnt.entity().pos().y(), playerEnt.size(), RED);
+            DrawText("?",(int)playerEnt.entity().pos().x()+3, (int)playerEnt.entity().pos().y()+3, playerEnt.size(), RED);
 
             EndDrawing();
         

@@ -5,13 +5,16 @@ import static com.rlgame.Globals.tileSize;
 import com.rlgame.map.Room;
 
 public class BooleanUtils {
-    
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RED = "\u001B[31m"; 
+    public static final String ANSI_GREEN = "\u001B[32m";
+
     public static void printBoolMap(boolean[][] booleanMap) {
         int count = 0;
         for (boolean[] bool : booleanMap) {
             for (boolean p : bool) {
                 if(p == true) {
-                    System.out.print("#");
+                    System.out.print(ANSI_GREEN+"#"+ANSI_RESET);
                 }
                 else{
                     System.out.print("%");

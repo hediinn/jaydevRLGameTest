@@ -1,18 +1,14 @@
-package com.rlgame;
+package com.rlgame.entities;
 
 import com.raylib.Raylib.Vector2;
+import com.rlgame.EntityInterface;
 
-public class EnemyEnt implements EntityInterface {
-
+public class WallEnt implements EntityInterface{
 
     private Vector2 pos;
-    private int HP;
-
-    public EnemyEnt(Vector2 startPos, int startHP) {
+    public WallEnt (Vector2 startPos) {
         pos = startPos;
-        HP = startHP;
     }
-
 
     @Override
     public Vector2 pos() {
@@ -21,37 +17,32 @@ public class EnemyEnt implements EntityInterface {
 
     @Override
     public int getHP() {
-        return HP;
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getHP'");
     }
 
     @Override
     public void takeDamage(int dmg) {
-        HP -=dmg;
-        System.out.println(HP);
-        if(HP <= 0) {
-            
-        }
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'takeDamage'");
     }
 
     @Override
     public void interact(EntityInterface dmgTo) {
         if(dmgTo.type() == "Player") {
-            takeDamage(2);
+            System.out.println("This is a wall");
         }
     }
 
-
     @Override
     public String type() {
-        return "Enemy";
+        return "Wall";
     }
-
 
     @Override
     public boolean isBlocking() {
-        return true; 
+        return true;
     }
-
 
     @Override
     public void takeTurn() {

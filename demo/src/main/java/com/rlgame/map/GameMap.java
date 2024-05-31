@@ -2,17 +2,17 @@ package com.rlgame.map;
 
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 import java.util.ArrayList;
 
 import static com.rlgame.Globals.mapSize;
+import static com.rlgame.Globals.seed;
 import static com.rlgame.Globals.tileSize;
 
 import com.raylib.Jaylib.Vector2;
 import com.rlgame.BooleanUtils;
-import com.rlgame.Entity;
 import com.rlgame.Point;
-import com.rlgame.WallEnt;
+import com.rlgame.entities.Entity;
+import com.rlgame.entities.WallEnt;
 
 import static com.raylib.Jaylib.*;
 
@@ -22,36 +22,26 @@ public class GameMap {
     private boolean[][] booleanMap;
     private List<Entity> entities;
     private Point unUsed = null;
-    private int seed = 2;
-
-    
+    private int roomCount = 8;
+    //private int seed = 0; green seed
+    private Random ran = new Random(seed);
+       
+    private ArrayList<Room> rooms = new ArrayList<>();
     public GameMap(int size) {
         entities = new ArrayList<Entity>();
         map = Generators.genMap(size);
         booleanMap = new boolean[size+1][size+1];
     }
-    public void startMap() {
-        for (Point p : map) {
-            entities.add(new Entity(new WallEnt(new Vector2().x(p.x()).y(p.y())), YELLOW, tileSize));
-            booleanMap[p.x()/tileSize][p.y()/tileSize] = true;
-        }
 
-        
-        ArrayList<Room> rooms = new ArrayList<>();
-
-
-        Random ran = new Random(2);
-        
-        for (int i = 0; i < booleanMap.length; i++) {
-            for (int j = 0; j < booleanMap.length; j++) {
-                booleanMap[i][j] = true;
-            }
-        }
-        Room playerRoom = new Room(tileSize,tileSize,2,2);
-        rooms.add(playerRoom);
+    private ArrayList<Room> randomRooms(boolean[][] bmap) {
+        ArrayList<Room> tempList = new ArrayList<>();
+        Room playerRoom = new Room(tileSize,tileSize,3,3);
+        tempList.add(playerRoom);
         addRoom(playerRoom);
-        for (int i = 0; i < 8;) {
-            int roomsize = ran.nextInt(2,4);
+
+
+        for (int i = 0; i < roomCount;) {
+            int roomsize = ran.nextInt(3,5);
             int x = ran.nextInt(3,mapSize-roomsize) * tileSize;
             int y = ran.nextInt(3,mapSize-roomsize) * tileSize;
             if(x/tileSize >18) {
@@ -63,17 +53,60 @@ public class GameMap {
                 System.exit(1);
             }
             Room tempRoom = new Room(x,y,roomsize,roomsize);
-            if(BooleanUtils.checkIfRoomFits(tempRoom,booleanMap))
+            if(BooleanUtils.checkIfRoomFits(tempRoom,bmap))
                 {
-                    rooms.add(tempRoom);
                     addRoom(tempRoom);
+                    tempList.add(tempRoom);
                     i++;
                 }  
         }
-        BooleanUtils.printBoolMap(booleanMap);
-        placeTunnels(rooms);
+        return tempList;
+    }
+
+
+
+
+    public void startMap() {
+        for (Point p : map) {
+            entities.add(new Entity(new WallEnt(new Vector2().x(p.x()).y(p.y())), YELLOW, tileSize));
+            booleanMap[p.x()/tileSize][p.y()/tileSize] = true;
+        }
+
+
 
         
+        for (int i = 0; i < booleanMap.length; i++) {
+            for (int j = 0; j < booleanMap.length; j++) {
+                booleanMap[i][j] = true;
+            }
+        }
+        rooms = randomRooms(booleanMap);
+        
+
+        boolean whileB = true;  
+        boolean[][] temp = new boolean[booleanMap.length][booleanMap.length];
+        int count = 100;
+
+        while (whileB) {
+            
+            temp = Generators.placeTunnels(rooms,booleanMap, ran);    
+            if(Generators.mapValidator(temp)){
+                booleanMap = temp;
+                whileB = false;
+                System.out.println("valid");
+            }else if(count<=0) {
+                booleanMap = temp;
+                whileB = false;
+                System.out.println("count low: "+count);
+            }
+            else{
+                
+            }
+            count--;
+        }
+
+        BooleanUtils.printBoolMap(booleanMap);
+      //  booleanMap = new Generators().flood(new Point(14, 14), booleanMap);
         for (Point p : map) {
             //System.err.println(p.x()+ "  "+p.y());
             if( 
@@ -92,8 +125,13 @@ public class GameMap {
             }            
         }
     }
+    public Random getRandom(){
+        return ran;
+    }
             
-
+    public ArrayList<Room> getRooms(){
+        return rooms;
+    }
 
     public List<Entity> getEntities() {
         return entities;
@@ -109,7 +147,7 @@ public class GameMap {
         return unUsed;
     }
     private void addRoom(Room room) {
-        System.out.println(room);
+        System.out.println(room.x() + "  " + room.y());
         setRoomToFalse(room.x()/tileSize, room.y()/tileSize,room.w(),room.h());
     }
 
@@ -130,71 +168,5 @@ public class GameMap {
     //2
     //1
     //012
-    private void placeTunnels(ArrayList<Room> rooms){
-     
-        boolean swap = true;
-        for (int room = 0; room <rooms.size(); room++) {
-            int x1 = ((rooms.get(room).x()/tileSize) *2+ rooms.get(room).w())/2;
-            int y1 = ((rooms.get(room).y()/tileSize) *2 +rooms.get(room).h())/2;
-            
-            List<Integer>potentialRooms = rooms.stream().map(a ->
-                            (int)(
-                                Math.sqrt(
-                                    Math.abs(
-                                        Math.pow((((a.x()/(double)tileSize)*2.0+a.w())/2.0)-x1,2.0))+ 
-                                    Math.abs(
-                                        Math.pow((((a.y()/(double)tileSize)*2.0+a.h())/2.0)-y1,2.0)) 
-                            ))
-                        
-                            )
-            .collect(Collectors.toList());
-
-            int index2 = potentialRooms.stream().filter(a -> a>0).min((i,j) -> i.compareTo(j)).get();
-            
-            int x2 = (rooms.get(potentialRooms.indexOf(index2)).x()/tileSize) *2+ rooms.get(potentialRooms.indexOf(index2)).w();
-            int y2 = (rooms.get(potentialRooms.indexOf(index2)).y()/tileSize) *2+ rooms.get(potentialRooms.indexOf(index2)).h();
-            x2 = x2/2;
-            y2 = y2/2;
-
-
-            
-            
-
-            int wx1,wx2,wy1,wy2;
-            wx1 = x1;
-            wx2 = x2;
-            wy1 = y1;
-            wy2 = y2;
-            if (x2 < x1 || y2< y1) {
-                wx1 = x2;
-                wx2 = x1;
-                wy1 = y2;
-                wy2 = y1;
-            }
-            if(swap) {
-                for(int i = wx1; i <=wx2;i++){
-                    booleanMap[i][wy2] = false;
-                }
-                for(int j = wy1; j <=wy2;j++){
-                    booleanMap[wx1][j] = false;
-                }
-                swap = false;
-            }else {
-                for(int i = wx1; i <=wx2;i++){
-                    booleanMap[i][wy1] = false;
-                }
-                for(int j = wy1; j <=wy2;j++){
-                    booleanMap[wx2][j] = false;
-                }
-                swap = true;
- 
- 
-            }
-
-
-
-
-
-        }
-    }
+    
 }
