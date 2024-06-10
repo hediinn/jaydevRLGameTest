@@ -30,6 +30,9 @@
                 </executions>
                 <configuration>
                     <mainClass>${main.class}</mainClass>
+                    <arguments>
+                          <argument>-ea</argument>
+                    </arguments>
                 </configuration>
             </plugin>
             <plugin>
